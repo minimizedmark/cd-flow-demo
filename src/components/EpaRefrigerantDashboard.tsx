@@ -47,6 +47,7 @@ interface ComplianceStatus {
 }
 
 interface MetricCard {
+  id: string;
   label: string;
   value: string | number;
   change?: string;
@@ -169,24 +170,28 @@ const complianceData: ComplianceStatus = {
 
 const metricsData: MetricCard[] = [
   {
+    id: 'metric-001',
     label: 'Total Refrigerant',
     value: '88 lbs',
     change: '+5% vs last month',
     status: 'good',
   },
   {
+    id: 'metric-002',
     label: 'Active Certifications',
     value: '2/3',
     change: '1 expiring soon',
     status: 'warning',
   },
   {
+    id: 'metric-003',
     label: 'This Month Recovery',
     value: '7.3 lbs',
     change: 'On track',
     status: 'good',
   },
   {
+    id: 'metric-004',
     label: 'Leak Rate',
     value: '2.1%',
     change: 'Below threshold',
@@ -211,8 +216,8 @@ const pulse = keyframes`
 // Styled Components
 // =============================================================================
 
-const DashboardContainer = styled.div`
-  min-height: 100vh;
+const DashboardContainer = styled.div<{ $fullHeight?: boolean }>`
+  min-height: ${({ $fullHeight }) => ($fullHeight ? '100vh' : 'auto')};
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 `;
@@ -770,8 +775,8 @@ interface MetricCardsProps {
 
 const MetricCardsComponent: React.FC<MetricCardsProps> = ({ metrics }) => (
   <GridCards>
-    {metrics.map((metric, index) => (
-      <MetricCardStyled key={index} $status={metric.status}>
+    {metrics.map((metric) => (
+      <MetricCardStyled key={metric.id} $status={metric.status}>
         <MetricLabel>{metric.label}</MetricLabel>
         <MetricValue>{metric.value}</MetricValue>
         {metric.change && <MetricChange $status={metric.status}>{metric.change}</MetricChange>}
@@ -926,6 +931,8 @@ export interface EpaRefrigerantDashboardProps {
   onAddEntry?: () => void;
   onExportReport?: () => void;
   onViewHistory?: () => void;
+  /** When true, dashboard takes full viewport height. Default: true */
+  fullHeight?: boolean;
 }
 
 const EpaRefrigerantDashboard: React.FC<EpaRefrigerantDashboardProps> = ({
@@ -942,9 +949,10 @@ const EpaRefrigerantDashboard: React.FC<EpaRefrigerantDashboardProps> = ({
   onAddEntry,
   onExportReport,
   onViewHistory,
+  fullHeight = true,
 }) => {
   return (
-    <DashboardContainer>
+    <DashboardContainer $fullHeight={fullHeight}>
       <HeaderSection complianceStatus={complianceStatus} icon={headerIcon} />
 
       <MainContent>
