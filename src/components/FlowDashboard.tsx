@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+// keyframes is used for pulse and pulseRing animations in LiveIndicator
 import styled, { keyframes } from 'styled-components';
 
 // =============================================================================
 // TYPE DEFINITIONS
 // =============================================================================
+
+/** Status type for technician availability */
+type Status = 'active' | 'idle' | 'offline';
 
 interface IconProps {
   icon?: React.ReactNode;
@@ -15,7 +19,7 @@ interface IconProps {
 interface TechLocation {
   id: string;
   name: string;
-  status: 'active' | 'idle' | 'offline';
+  status: Status;
   location: string;
   currentJob: string;
   eta: string;
@@ -31,7 +35,7 @@ interface SidebarTechInfo {
   role: string;
   jobsCompleted: number;
   rating: number;
-  status: 'active' | 'idle' | 'offline';
+  status: Status;
   currentLocation: string;
 }
 
@@ -342,7 +346,7 @@ const MapOverlay = styled.div`
   );
 `;
 
-const MarkerWrapper = styled.div<{ $top: string; $left: string; $status: string }>`
+const MarkerWrapper = styled.div<{ $top: string; $left: string; $status: Status }>`
   position: absolute;
   top: ${({ $top }) => $top};
   left: ${({ $left }) => $left};
@@ -356,7 +360,7 @@ const MarkerWrapper = styled.div<{ $top: string; $left: string; $status: string 
   }
 `;
 
-const MarkerIcon = styled.div<{ $status: string }>`
+const MarkerIcon = styled.div<{ $status: Status }>`
   position: relative;
   width: 48px;
   height: 48px;
@@ -513,7 +517,7 @@ const TechCardHeader = styled.div`
   margin-bottom: 0.75rem;
 `;
 
-const TechAvatar = styled.div<{ $status: string }>`
+const TechAvatar = styled.div<{ $status: Status }>`
   width: 40px;
   height: 40px;
   display: flex;
@@ -543,7 +547,7 @@ const TechRole = styled.div`
   color: rgba(255, 255, 255, 0.6);
 `;
 
-const StatusBadge = styled.span<{ $status: string }>`
+const StatusBadge = styled.span<{ $status: Status }>`
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
   font-size: 0.625rem;
@@ -780,6 +784,7 @@ export default FlowDashboard;
 
 // Export types for external use
 export type {
+  Status,
   TechLocation,
   SidebarTechInfo,
   StatMini,
