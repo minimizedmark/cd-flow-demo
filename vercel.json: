@@ -1,0 +1,45 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "next build"
+}
+```
+
+## 2. **Root Cause Explanation**
+
+**What was actually happening:**
+- Your Next.js app built successfully (you can see the build output with routes and sizes)
+- Vercel then looked for a directory called `public` to serve as the output
+- It couldn't find `public` because Next.js outputs to `.next`, not `public`
+
+**What it needed to do:**
+- Recognize this is a Next.js project and look in `.next` for the build output
+- Or follow explicit configuration pointing to the correct directory
+
+**The misconception:**
+Vercel was treating your project as a static site (which outputs to `public`) rather than a Next.js application (which outputs to `.next`). This happens when:
+- Framework preset is set incorrectly
+- You have conflicting configuration
+- Vercel's auto-detection failed
+
+## 3. **Underlying Concept**
+
+**Why this error exists:**
+Different frameworks output their builds to different directories:
+- **Static sites** → `public/`, `dist/`, `build/`
+- **Next.js** → `.next/`
+- **Create React App** → `build/`
+- **Vite** → `dist/`
+
+Vercel needs to know where to find your built files to deploy them to their edge network.
+
+**The correct mental model:**
+
+Think of the build process as two distinct steps:
+```
+Step 1: BUILD
+Your source code → Build process → Output directory
+(src/app/)       (next build)     (.next/)
+
+Step 2: DEPLOY
+Output directory → Vercel reads files → Deploy to edge
+(.next/)            ✓ Found!          → Live!
